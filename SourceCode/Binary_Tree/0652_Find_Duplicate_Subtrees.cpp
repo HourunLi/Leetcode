@@ -21,6 +21,7 @@ public:
     string left = traversal(root->left);
     string right = traversal(root->right);
     //must add delimiters
+    //couldn't change to inorder
     string tree = left + "," + right + "," + to_string(root->val);
     memo[tree]++;
     if(memo[tree] == 2) {
