@@ -6,7 +6,6 @@ using namespace std;
 //   TreeNode *right;
 //   TreeNode(int x) : val(x), left(NULL), right(NULL) {}
 // };
-
 class Codec {
 public:
   // Encodes a tree to a single string.
