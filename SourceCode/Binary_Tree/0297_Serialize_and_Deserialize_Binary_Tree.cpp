@@ -7,9 +7,11 @@ using namespace std;
 //   TreeNode(int x) : val(x), left(NULL), right(NULL) {}
 // };
 class Codec {
+private: 
 public:
   // Encodes a tree to a single string.
   string serialize(TreeNode* root) {
+    int n = 0;
     queue<TreeNode*> q;
     string ret;
     q.push(root);
@@ -18,42 +20,48 @@ public:
       q.pop();
       if(top == NULL) {
         ret = ret + ',';
+        n++;
         continue;
       }
       q.push(top->left);
       q.push(top->right);
+      n++;
       ret = ret + to_string(top->val) + ',';
     }
-    ret.erase(ret.find_last_not_of(",")+2);
-    cout << ret << endl;
+    ret += to_string(n);
+    // cout << ret << endl;
     return ret;
   }
 
   // Decodes your encoded data to tree.
   TreeNode* deserialize(string data) {
-    vector<TreeNode *> vec;
+    int pos = data.find_last_of(",");
+    string sub = data.substr(pos+1);
+    int n = stoi(sub);
+    data.erase(pos+1);
+    // cout << data << endl << n << endl;
+    TreeNode **vec = (TreeNode **) malloc(n * sizeof(TreeNode *));
+    int ptr = 0;
     int begin = 0, end = 0;
     while((end=data.find(',',begin)) != string::npos) {
       string substr = data.substr(begin, end-begin);
       if(substr == "") {
-        // cout << "null\n";
-        vec.push_back(nullptr);
+        vec[ptr++] = nullptr;
       }else{
         int val = stoi(substr);
-        // cout << val << endl;
-        vec.emplace_back(new TreeNode(val));
+        vec[ptr++] = new TreeNode(val);
       }
       begin = end+1;
     }
-    // cout << vec.size() << endl;
+    // cout << "here" << endl;
     int l = 0, r = 0;
-    int n = vec.size();
     for(l = 0; l < n; l++){
-      if(vec[l] == nullptr) continue;
+      TreeNode *root = vec[l];
+      if(root == nullptr) continue;
       if(++r >= n) break;
-      vec[l]->left = vec[r];
+      root->left = vec[r];
       if(++r >= n) break;
-      vec[l]->right = vec[r];
+      root->right = vec[r];
     }
     return vec[0];
   }
@@ -62,3 +70,54 @@ public:
 // Your Codec object will be instantiated and called as such:
 // Codec ser, deser;
 // TreeNode* ans = deser.deserialize(ser.serialize(root));
+
+
+// class Codec {
+// public:
+//     void rserialize(TreeNode* root, string& str) {
+//         if (root == nullptr) {
+//             str += "None,";
+//         } else {
+//             str += to_string(root->val) + ",";
+//             rserialize(root->left, str);
+//             rserialize(root->right, str);
+//         }
+//     }
+
+//     string serialize(TreeNode* root) {
+//         string ret;
+//         rserialize(root, ret);
+//         return ret;
+//     }
+
+//     TreeNode* rdeserialize(list<string>& dataArray) {
+//         if (dataArray.front() == "None") {
+//             dataArray.erase(dataArray.begin());
+//             return nullptr;
+//         }
+
+//         TreeNode* root = new TreeNode(stoi(dataArray.front()));
+//         dataArray.erase(dataArray.begin());
+//         root->left = rdeserialize(dataArray);
+//         root->right = rdeserialize(dataArray);
+//         return root;
+//     }
+
+//     TreeNode* deserialize(string data) {
+//         list<string> dataArray;
+//         string str;
+//         for (auto& ch : data) {
+//             if (ch == ',') {
+//                 dataArray.push_back(str);
+//                 str.clear();
+//             } else {
+//                 str.push_back(ch);
+//             }
+//         }
+//         if (!str.empty()) {
+//             dataArray.push_back(str);
+//             str.clear();
+//         }
+//         return rdeserialize(dataArray);
+//     }
+// };
