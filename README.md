@@ -8,3 +8,4 @@
 
 652 serialization，use memo to find duplicate elements
 
+710 Hash搭配vector，数组元素的swap应用
