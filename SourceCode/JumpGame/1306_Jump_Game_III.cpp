@@ -1,4 +1,6 @@
-/*BFS*/
+#include<bits/stdc++.h>
+using namespace std;
+//BFS
 class Solution {
 public:
     bool canReach(vector<int>& arr, int start) {
@@ -18,7 +20,7 @@ public:
         return false;
     }
 };
-/*DFS*/
+//DFS
 class Solution {
 public:
     bool dfs(vector<int>& arr, int start, int size){
