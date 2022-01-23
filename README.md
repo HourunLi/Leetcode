@@ -9,3 +9,5 @@
 652 serialization，use memo to find duplicate elements
 
 710 Hash搭配vector，数组元素的swap应用
+
+1696 sliding window解法：有序队列，用位置记录信息。
