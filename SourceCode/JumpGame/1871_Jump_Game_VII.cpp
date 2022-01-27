@@ -30,52 +30,25 @@ public:
 class Solution {
 public:
   bool canReach(string s, int minJump, int maxJump) {
-    int size =s.size();
-    int flag = false;
-    int begin = minJump, end = maxJump;
-    if(size==1) 
-      return true;
-    if(s[size-1] != '0') 
-      return false;
-
-    while(begin < size) {
-      if(end >= size-1)
-        return true;
-      flag = false;
-      for(int pos = begin; pos <= end; ++pos) {
-        if(s[pos] == '0') {
-          begin = pos;
-          end = pos + maxJump;
-          flag = true;
-          break;
+    int size = s.size();
+    bool *canReach = (bool *)calloc(size, sizeof(bool));
+    int *pre = (int *)calloc(size, sizeof(int));
+    canReach[0] = 1;
+    pre[0]=1;
+    for(int i = 1; i < size; i++) {
+      if(s[i] == '1') {
+        pre[i] = pre[i-1];
+      }else{
+        int l = i - maxJump > 0 ? pre[i - maxJump-1] : 0;
+        int r = i - minJump >= 0 ? pre[i - minJump] : 0;
+        if(r-l) {
+          canReach[i] = true;
+          pre[i] = pre[i-1]+1;
+        }else{
+          pre[i] = pre[i-1];
         }
       }
-      if(!flag) {
-        return false;
-      }
     }
-    return false;
-  }
-};
-
-class Solution {
-public:
-  bool canReach(string s, int minJump, int maxJump) {
-    int n = s.size();
-    vector<int> f(n), pre(n);
-    f[0] = 1;
-    // 由于我们从 i=minJump 开始动态规划，因此需要将 [0,minJump) 这部分的前缀和预处理出来
-    for (int i = 0; i < minJump; ++i) {
-      pre[i] = 1;
-    }
-    for (int i = minJump; i < n; ++i) {
-      int left = i - maxJump, right = i - minJump;
-      if (s[i] == '0') {
-        int total = pre[right] - (left <= 0 ? 0 : pre[left - 1]);
-        f[i] = (total != 0);
-      }
-      pre[i] = pre[i - 1] + f[i];
-    }
-    return f[n - 1];
+    return canReach[size-1];
   }
 };
