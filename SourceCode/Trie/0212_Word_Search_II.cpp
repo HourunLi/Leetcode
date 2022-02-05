@@ -93,7 +93,7 @@ public:
 };
 
 
-// another tricky method
+// trick method without eliminating redundancy 
 #include<bits/stdc++.h>
 using namespace std;
 
