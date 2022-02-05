@@ -6,9 +6,9 @@ class Trie:
     def insert(self, word):
         ptr = self
         for ch in word:
-            if ch not in self.children:
-                self.children[ch] = Trie()
-            ptr = self.children[ch]
+            if ch not in ptr.children:
+                ptr.children[ch] = Trie()
+            ptr = ptr.children[ch]
         ptr.word = word
 
 
@@ -24,7 +24,7 @@ class Solution(object):
         def dfs(x, y, trieNode):
             # child func can use var from parent
             ch = board[x][y]
-            if ch not in trieNode:
+            if ch not in trieNode.children:
                 return
 
             next = trieNode.children[ch]
