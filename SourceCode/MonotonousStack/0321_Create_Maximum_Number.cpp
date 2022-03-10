@@ -1,96 +1,71 @@
 #include<bits/stdc++.h>
 using namespace std;
-// #define DEBUG
+
 class Solution {
 public:
   vector<int> maxNumber(vector<int>& nums1, vector<int>& nums2, int k) {
-    int m = nums1.size(), n = nums2.size();
-    int *ret = NULL;
-    if(m > n) {
-      return maxNumber(nums2, nums1, k);
-    }
-    // make sure that m is smaller than or equal to m
-    int begin = max(0, k-n);
-    int end = min(m, k);
+    int n = nums1.size(), m = nums2.size();
+    int begin = max(k-m, 0), end = min(n, k);
+    vector<int> ret;
+
     for(int i = begin; i <= end; i++) {
-      int *maxSub1 = maxSubsequence(nums1, i);
-      int *maxSub2 = maxSubsequence(nums2, k - i);
-      #ifdef DEBUG
-      cout << i << "---------------------------\n";
-      dump(maxSub1, i);
-      dump(maxSub2, k-i);
-      cout << "-------------------------\n";
-      #endif
-      int *maxSub = merge(maxSub1, i, maxSub2, k-i);
-      ret = comapreAndSwap(ret, maxSub, k);
-    }
-    return vector<int>(ret, ret + k);
+      vector<int> maxSubSequence1 = maxSubSequence(nums1, i);
+      vector<int> maxSubSequence2 = maxSubSequence(nums2, k-i);
+      vector<int> mergeSeq = merge(maxSubSequence1, maxSubSequence2);
+      if(compare(mergeSeq, 0, ret, 0)) {
+        ret = mergeSeq;
+      }
+    } 
+    return ret;
   }
-  void dump(int *sub, int size) {
-    for(int i = 0; i < size; i++) {
-      cout << sub[i] << " ";
-    }
-    cout << endl;
-    return;
-  }
-  int *maxSubsequence(vector<int> &nums, int k) {
-    int n = nums.size();
-    int discard = n-k;
-    int *ret = (int *)malloc(k * sizeof(int));
-    int top = 0;
-    for(auto i : nums) {
-      while(top > 0 && ret[top-1] < i && discard > 0) {
-        discard--;
-        top--;
+  vector<int> maxSubSequence(vector<int>& nums, int k) {
+    int len = nums.size();
+    int residual = len-k, ele = 0;
+    vector<int> ret(k, 0);
+    for(int i = 0; i < len; i++) {
+      while(ele && ret[ele-1] < nums[i] && residual) {
+        ele--;
+        residual--;
       }
 
-      if(top < k) {
-        ret[top++] = i;
+      if(ele < k) {
+        ret[ele++] = nums[i];
       }else{
-        discard--;
+        residual--;
       }
     }
     return ret;
   }
 
-  int *merge(int *sub1, int size1, int *sub2, int size2) {
-    int idx1 = 0, idx2 = 0;
-    int *ret = (int *)malloc((size1 + size2) * sizeof(int));
-    for(int i = 0; i < size1 + size2; i++) {
-      if(compare(sub1, size1, idx1, sub2, size2, idx2)) {
-        ret[i] = sub1[idx1++];
+  bool compare(vector<int>& nums1, int ind1, vector<int>&nums2, int ind2) {
+    int n = nums1.size(), m = nums2.size();
+    if(n == ind1) {
+      return false;
+    }else if(m == ind2) {
+      return true;
+    }
+
+    if(nums1[ind1] == nums2[ind2]) {
+      return compare(nums1, ind1+1, nums2, ind2+1);
+    }
+    return nums1[ind1] > nums2[ind2];
+  }
+
+  vector<int> merge(vector<int>& nums1, vector<int>& nums2) {
+    int n = nums1.size(), m = nums2.size();
+    if(!n || !m) {
+      return !n ? nums2 : nums1;
+    }
+    vector<int> ret(n+m);
+    int ind1 = 0, ind2 = 0;
+    for(int i = 0; i < n + m; i++) {
+      if(compare(nums1, ind1, nums2, ind2)) {
+        ret[i] = nums1[ind1++];
       }else{
-        ret[i] = sub2[idx2++];
+        ret[i] = nums2[ind2++];
       }
     }
-    free(sub1);
-    free(sub2);
     return ret;
   }
 
-  int *comapreAndSwap(int *ret, int *sub, int k) {
-    if(compare(ret, k, 0, sub, k, 0)) {
-      free(sub);
-      return ret;
-    }else{
-      free(ret);
-      return sub;
-    }
-  }
-
-  int compare(int *sub1, int size1, int idx1, int *sub2, int size2, int idx2) {
-    if(size1 == idx1 || sub1 == NULL) {
-      return 0;
-    }else if(size2 == idx2) {
-      return 1;
-    }
-
-    if(sub1[idx1] > sub2[idx2]) {
-      return 1;
-    }else if(sub1[idx1] < sub2[idx2]){
-      return 0;
-    }else{
-      return compare(sub1, size1, idx1+1, sub2, size2, idx2+1);
-    }
-  }
 };
