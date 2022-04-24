@@ -4,7 +4,8 @@
 		"*.wxss": "css",
 		"*.wxs": "javascript",
 		"string": "cpp",
-		"iostream": "cpp"
+		"iostream": "cpp",
+		"*.tcc": "cpp"
 	},
 	"editor.tabSize": 2
 }
